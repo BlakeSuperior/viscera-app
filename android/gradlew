@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# This file is used by the Gradle wrapper to download and use the specified version of Gradle.
+# This is a minimal wrapper script that downloads gradle-wrapper.jar if needed and then delegates to it.
+
+set -e
+
+# Determine the script directory
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+PROJECT_DIR=$(dirname "$SCRIPT_DIR")
+
+# Gradle wrapper properties
+GRADLE_WRAPPER_JAR="$SCRIPT_DIR/gradle-wrapper.jar"
+GRADLE_WRAPPER_PROPERTIES="$SCRIPT_DIR/gradle-wrapper.properties"
+
+# Function to download the gradle wrapper jar
+download_gradle_wrapper() {
+  echo "Downloading gradle wrapper..."
+  
+  # Create a temporary directory
+  TMP_DIR=$(mktemp -d)
+  
+  # Download the gradle wrapper jar
+  curl -L -o "$TMP_DIR/gradle-wrapper.jar" "https://github.com/gradle/gradle/raw/v7.5.1/gradle/wrapper/gradle-wrapper.jar"
+  
+  # Move the jar to the script directory
+  mv "$TMP_DIR/gradle-wrapper.jar" "$GRADLE_WRAPPER_JAR"
+  
+  # Clean up
+  rm -rf "$TMP_DIR"
+  
+  echo "Gradle wrapper downloaded successfully."
+}
+
+# Check if the gradle wrapper jar exists
+if [ ! -f "$GRADLE_WRAPPER_JAR" ]; then
+  download_gradle_wrapper
+fi
+
+# Execute the gradle wrapper
+exec java -Xmx64m -Xms64m -classpath "$GRADLE_WRAPPER_JAR" org.gradle.wrapper.GradleWrapperMain "$@"
